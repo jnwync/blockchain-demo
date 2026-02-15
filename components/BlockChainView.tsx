@@ -5,6 +5,7 @@ interface BlockChainViewProps {
   chain: IBlock[];
   validationStatus: BlockValidation[];
   onEditBlock?: (index: number, newData: string) => void;
+  onCopyHash?: (hash: string) => void;
 }
 
 /**
@@ -15,12 +16,13 @@ interface BlockChainViewProps {
  * the previous block's hash.
  * 
  * Phase 5: Added edit callback for tampering demonstration
+ * Enhanced: Added copy hash callback, dark mode support
  */
-export default function BlockChainView({ chain, validationStatus, onEditBlock }: BlockChainViewProps) {
+export default function BlockChainView({ chain, validationStatus, onEditBlock, onCopyHash }: BlockChainViewProps) {
   if (chain.length === 0) {
     return (
       <div className="text-center py-20">
-        <div className="text-gray-400 text-lg">
+        <div className="text-gray-400 dark:text-gray-500 text-lg">
           <svg
             className="w-16 h-16 mx-auto mb-4"
             fill="none"
@@ -35,7 +37,7 @@ export default function BlockChainView({ chain, validationStatus, onEditBlock }:
             />
           </svg>
           <p className="font-semibold">No blocks in the chain</p>
-          <p className="text-sm mt-2">Mine your first block to get started!</p>
+          <p className="text-sm mt-2">Mine your first block to get started</p>
         </div>
       </div>
     );
@@ -45,10 +47,10 @@ export default function BlockChainView({ chain, validationStatus, onEditBlock }:
     <div className="w-full">
       {/* Chain Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           Blockchain
         </h2>
-        <p className="text-gray-600 mt-1">
+        <p className="text-gray-600 dark:text-gray-400 mt-1">
           {chain.length} block{chain.length !== 1 ? 's' : ''} in the chain
         </p>
       </div>
@@ -69,6 +71,7 @@ export default function BlockChainView({ chain, validationStatus, onEditBlock }:
                   block={block}
                   isValid={isValid}
                   onEdit={onEditBlock}
+                  onCopyHash={onCopyHash}
                   isFirst={index === 0}
                   isLast={index === chain.length - 1}
                 />
@@ -80,7 +83,7 @@ export default function BlockChainView({ chain, validationStatus, onEditBlock }:
         {/* Scroll hint on mobile */}
         {chain.length > 1 && (
           <div className="flex justify-center mt-4">
-            <div className="text-sm text-gray-500 flex items-center">
+            <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
               <svg
                 className="w-4 h-4 mr-2 animate-pulse"
                 fill="none"
@@ -114,11 +117,11 @@ export default function BlockChainView({ chain, validationStatus, onEditBlock }:
       </div>
 
       {/* Chain Info */}
-      <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <h3 className="font-semibold text-blue-900 mb-2">
+      <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+        <h3 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">
           🔗 How Blocks Link Together
         </h3>
-        <p className="text-sm text-blue-800">
+        <p className="text-sm text-blue-800 dark:text-blue-200">
           Each block's <strong>Previous Hash</strong> field matches the <strong>Hash</strong> of the block before it. 
           This creates an unbreakable chain - changing any block would break all the links that come after it!
         </p>

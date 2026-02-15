@@ -1,3 +1,7 @@
+'use client';
+
+import { motion } from 'framer-motion';
+
 interface DifficultySelectorProps {
   difficulty: number;
   onDifficultyChange: (difficulty: number) => void;
@@ -15,6 +19,7 @@ interface DifficultySelectorProps {
  * - 2: Hash must start with "00" (easy, ~10ms)
  * - 3: Hash must start with "000" (medium, ~100ms)
  * - 4: Hash must start with "0000" (hard, ~1-2s)
+ * Enhanced: Animations and dark mode support
  */
 export default function DifficultySelector({ 
   difficulty, 
@@ -29,38 +34,43 @@ export default function DifficultySelector({
   ];
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-lg border border-gray-200">
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-200 dark:border-gray-700">
       <div className="mb-4">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
           Mining Difficulty
         </h3>
-        <p className="text-sm text-gray-600">
-          Higher difficulty requires more computational work to mine blocks
-        </p>
       </div>
 
       {/* Difficulty Buttons */}
       <div className="grid grid-cols-4 gap-3 mb-4">
         {levels.map((level) => (
-          <button
+          <motion.button
             key={level.value}
             onClick={() => !disabled && onDifficultyChange(level.value)}
             disabled={disabled}
             className={`
               relative p-4 rounded-lg border-2 transition-all duration-200
               ${difficulty === level.value
-                ? 'border-blue-500 bg-blue-50 shadow-md'
-                : 'border-gray-300 bg-white hover:border-blue-300 hover:bg-blue-50'
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 shadow-md'
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-blue-300 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20'
               }
               ${disabled 
                 ? 'opacity-50 cursor-not-allowed' 
                 : 'cursor-pointer'
               }
             `}
+            whileHover={!disabled ? { scale: 1.05 } : {}}
+            whileTap={!disabled ? { scale: 0.95 } : {}}
           >
             {/* Selected Indicator */}
             {difficulty === level.value && (
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+              <motion.div
+                className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                exit={{ scale: 0, rotate: 180 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+              >
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
@@ -68,13 +78,13 @@ export default function DifficultySelector({
                     clipRule="evenodd"
                   />
                 </svg>
-              </div>
+              </motion.div>
             )}
             
             {/* Level Number */}
             <div className={`
               text-3xl font-bold mb-1
-              ${difficulty === level.value ? 'text-blue-600' : 'text-gray-700'}
+              ${difficulty === level.value ? 'text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}
             `}>
               {level.label}
             </div>
@@ -82,30 +92,30 @@ export default function DifficultySelector({
             {/* Description */}
             <div className={`
               text-xs font-semibold
-              ${difficulty === level.value ? 'text-blue-600' : 'text-gray-600'}
+              ${difficulty === level.value ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'}
             `}>
               {level.desc}
             </div>
-          </button>
+          </motion.button>
         ))}
       </div>
 
       {/* Current Difficulty Info */}
-      <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+      <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
         <div className="flex items-center justify-between text-sm">
           <div>
-            <span className="text-gray-700 font-semibold">Current: </span>
-            <span className="text-blue-700 font-bold">Level {difficulty}</span>
+            <span className="text-gray-700 dark:text-gray-300 font-semibold">Current: </span>
+            <span className="text-blue-700 dark:text-blue-400 font-bold">Level {difficulty}</span>
           </div>
           <div className="text-right">
-            <div className="text-gray-600">Required Hash:</div>
-            <code className="text-blue-600 font-mono font-bold">
+            <div className="text-gray-600 dark:text-gray-400">Required Hash:</div>
+            <code className="text-blue-600 dark:text-blue-400 font-mono font-bold">
               {levels[difficulty - 1].zeros}
             </code>
           </div>
           <div className="text-right">
-            <div className="text-gray-600">Est. Time:</div>
-            <div className="text-blue-700 font-semibold">
+            <div className="text-gray-600 dark:text-gray-400">Est. Time:</div>
+            <div className="text-blue-700 dark:text-blue-400 font-semibold">
               {levels[difficulty - 1].time}
             </div>
           </div>
@@ -113,8 +123,8 @@ export default function DifficultySelector({
       </div>
 
       {/* Info Box */}
-      <div className="mt-4 p-3 bg-gray-50 rounded border border-gray-200">
-        <p className="text-xs text-gray-600">
+      <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600">
+        <p className="text-xs text-gray-600 dark:text-gray-300">
           <strong>💡 Tip:</strong> Difficulty determines how many leading zeros are required in the block hash. 
           Each additional zero makes mining approximately 16× harder!
         </p>

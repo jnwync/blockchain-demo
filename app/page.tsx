@@ -1,14 +1,22 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useBlockchain } from '@/hooks/useBlockchain';
+import { useToast } from '@/hooks/useToast';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 import BlockChainView from '@/components/BlockChainView';
 import ValidationIndicator from '@/components/ValidationIndicator';
 import DifficultySelector from '@/components/DifficultySelector';
 import MiningForm from '@/components/MiningForm';
 import TransactionLedger from '@/components/TransactionLedger';
+import ToastContainer from '@/components/ToastContainer';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Home() {
+  const isMobile = useIsMobile();
+  const miningFormRef = useRef<HTMLDivElement>(null);
+  
   // Phase 3: Use custom blockchain state management hook
   const { 
     chain, 
@@ -22,14 +30,71 @@ export default function Home() {
     editBlock
   } = useBlockchain(2); // Start with difficulty 2
 
+  // Toast notifications
+  const { toasts, hideToast, success, info, error: showError } = useToast();
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'm',
+      description: 'Focus mining form',
+      callback: () => {
+        miningFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+        const input = miningFormRef.current?.querySelector('input');
+        input?.focus();
+      }
+    },
+    {
+      key: '1',
+      description: 'Set difficulty to 1',
+      callback: () => {
+        if (!isMining) {
+          setDifficulty(1);
+        }
+      }
+    },
+    {
+      key: '2',
+      description: 'Set difficulty to 2',
+      callback: () => {
+        if (!isMining) {
+          setDifficulty(2);
+        }
+      }
+    },
+    {
+      key: '3',
+      description: 'Set difficulty to 3',
+      callback: () => {
+        if (!isMining) {
+          setDifficulty(3);
+        }
+      }
+    },
+    {
+      key: '4',
+      description: 'Set difficulty to 4',
+      callback: () => {
+        if (!isMining) {
+          setDifficulty(4);
+        }
+      }
+    },
+  ]);
+
+  // Handle copy hash with toast notification
+  const handleCopyHash = (hash: string) => {
+    success('Copied');
+  };
+
   useEffect(() => {
     // Pre-mine a couple of blocks to demonstrate the chain on initial load
     const initializeChain = async () => {
       try {
         await addBlock('Alice pays Bob 10 coins');
         await addBlock('Bob pays Charlie 5 coins');
-      } catch (error) {
-        console.error('Error initializing chain:', error);
+      } catch (err) {
+        console.error('Error initializing chain:', err);
       }
     };
     
@@ -40,16 +105,16 @@ export default function Home() {
   }, []); // Empty dependency array - run once on mount
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
-        <header className="mb-8">
-          <h1 className="text-5xl font-bold text-gray-900 mb-2">
-            ⛓️ Blockchain Visualizer
-          </h1>
-          <p className="text-lg text-gray-600">
-            Watch how blockchain works in real-time - mine blocks, see validation, and understand proof-of-work
-          </p>
+        <header className="mb-8 flex items-start justify-between">
+          <div className="flex-1">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">
+              Blockchain Visualizer
+            </h1>
+          </div>
+          <ThemeToggle />
         </header>
 
         <main className="space-y-6">
@@ -57,7 +122,7 @@ export default function Home() {
           <ValidationIndicator isValid={isValid} blockCount={chain.length} />
 
           {/* Phase 4: Interactive Controls */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div ref={miningFormRef} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <DifficultySelector
               difficulty={difficulty}
               onDifficultyChange={setDifficulty}
@@ -76,40 +141,16 @@ export default function Home() {
             chain={chain} 
             validationStatus={validationStatus}
             onEditBlock={editBlock}
+            onCopyHash={handleCopyHash}
           />
-
-          {/* Educational Info Box */}
-          <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-yellow-900 mb-2 flex items-center gap-2">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-              Try Tampering with the Blockchain!
-            </h3>
-            <p className="text-sm text-yellow-800 mb-3">
-              Click the <strong>"Edit"</strong> button on any block (except Genesis) to change its data. 
-              This simulates a malicious actor trying to alter transaction history.
-            </p>
-            <ul className="text-sm text-yellow-800 space-y-1 list-disc list-inside">
-              <li>The block's hash won't be recalculated (tampered data)</li>
-              <li>The validation indicator will turn red</li>
-              <li>The tampered block and all subsequent blocks will show as invalid</li>
-              <li>This demonstrates why blockchain is secure and tamper-evident!</li>
-            </ul>
-          </div>
 
           {/* Phase 6: Transaction Ledger (Bonus Feature) */}
           <TransactionLedger chain={chain} />
         </main>
-
-        {/* Footer */}
-        <footer className="mt-12 text-center text-sm text-gray-500">
-          <p>
-            Built with Next.js, TypeScript, and Tailwind CSS • 
-            Educational blockchain visualization
-          </p>
-        </footer>
       </div>
+
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onDismiss={hideToast} />
     </div>
   );
 }

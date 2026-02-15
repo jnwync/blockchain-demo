@@ -4,7 +4,7 @@
  * Run in browser console to verify blockchain logic works correctly
  */
 
-import { Blockchain } from './lib/blockchain';
+import { Blockchain } from './blockchain';
 
 console.log('🔗 Testing Blockchain Implementation - Phase 1\n');
 console.log('='.repeat(60));

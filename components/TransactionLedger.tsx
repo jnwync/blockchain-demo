@@ -13,14 +13,11 @@ interface TransactionLedgerProps {
  */
 export default function TransactionLedger({ chain }: TransactionLedgerProps) {
   return (
-    <div className="bg-white rounded-lg p-6 shadow-lg border border-gray-200">
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-200 dark:border-gray-700">
       <div className="mb-4">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">
-          📜 Transaction Ledger
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          Transaction Ledger
         </h3>
-        <p className="text-sm text-gray-600">
-          Complete history of all transactions in chronological order
-        </p>
       </div>
 
       {/* Transaction List */}
@@ -31,8 +28,8 @@ export default function TransactionLedger({ chain }: TransactionLedgerProps) {
             className={`
               p-4 rounded-lg border-l-4 transition-colors
               ${index === 0 
-                ? 'bg-blue-50 border-blue-500' 
-                : 'bg-gray-50 border-gray-400 hover:bg-gray-100'
+                ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600' 
+                : 'bg-gray-50 dark:bg-gray-700 border-gray-400 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600'
               }
             `}
           >
@@ -40,19 +37,19 @@ export default function TransactionLedger({ chain }: TransactionLedgerProps) {
               {/* Block Info */}
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-bold text-gray-500 bg-white px-2 py-1 rounded">
+                  <span className="text-xs font-bold text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-2 py-1 rounded">
                     Block #{block.index}
                   </span>
                   {index === 0 && (
-                    <span className="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                    <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/40 px-2 py-1 rounded">
                       Genesis
                     </span>
                   )}
                 </div>
-                <div className="text-sm font-semibold text-gray-900 mb-1">
+                <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
                   {block.data || '(Genesis Block)'}
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 dark:text-gray-400">
                   {formatTimestamp(block.timestamp)}
                 </div>
               </div>
@@ -75,21 +72,21 @@ export default function TransactionLedger({ chain }: TransactionLedgerProps) {
       </div>
 
       {/* Stats Footer */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
+      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold text-gray-900">{chain.length}</div>
-            <div className="text-xs text-gray-500">Total Blocks</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{chain.length}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">Total Blocks</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-gray-900">{chain.length - 1}</div>
-            <div className="text-xs text-gray-500">Transactions</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{chain.length - 1}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">Transactions</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {chain[chain.length - 1]?.nonce || 0}
             </div>
-            <div className="text-xs text-gray-500">Last Nonce</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">Last Nonce</div>
           </div>
         </div>
       </div>
