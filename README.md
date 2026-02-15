@@ -6,7 +6,11 @@ An interactive web application that demonstrates how blockchain technology works
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat&logo=tailwind-css)
 
-## 🎯 Features
+## � Live Demo
+
+**[View Live Demo →](https://blockchain-demo-jnwync.vercel.app/)**
+
+## �🎯 Features
 
 ### Core Features
 
@@ -139,7 +143,7 @@ The system checks:
 
 ## 🎨 Screenshots
 
-*Add screenshots here after deployment*
+![alt text](image.png)
 
 ## 📖 Documentation
 
