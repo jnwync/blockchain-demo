@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { IBlock } from '@/lib/blockchain/types';
 import { truncateHash, formatTimestamp } from '@/lib/utils/formatters';
 
@@ -6,6 +7,7 @@ interface BlockCardProps {
   isValid: boolean;
   isFirst?: boolean;
   isLast?: boolean;
+  onEdit?: (index: number, newData: string) => void;
 }
 
 /**
@@ -18,8 +20,24 @@ interface BlockCardProps {
  * 4. Previous hash
  * 5. Nonce
  * 6. Hash
+ * 
+ * Phase 5: Added edit functionality for tampering demonstration
  */
-export default function BlockCard({ block, isValid, isFirst = false, isLast = false }: BlockCardProps) {
+export default function BlockCard({ block, isValid, isFirst = false, isLast = false, onEdit }: BlockCardProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedData, setEditedData] = useState(block.data);
+  
+  const handleSave = () => {
+    if (onEdit && editedData !== block.data) {
+      onEdit(block.index, editedData);
+    }
+    setIsEditing(false);
+  };
+  
+  const handleCancel = () => {
+    setEditedData(block.data);
+    setIsEditing(false);
+  };
   return (
     <div className="flex items-center">
       {/* Block Card */}
@@ -57,12 +75,55 @@ export default function BlockCard({ block, isValid, isFirst = false, isLast = fa
         <div className="space-y-3">
           {/* Data */}
           <div>
-            <label className="text-xs font-semibold text-gray-600 uppercase">
-              Data
-            </label>
-            <div className="mt-1 p-2 bg-gray-50 rounded text-sm text-gray-800 break-words">
-              {block.data || '(empty)'}
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-semibold text-gray-600 uppercase">
+                Data
+              </label>
+              {/* Edit Button (not for genesis block) */}
+              {block.index > 0 && onEdit && !isEditing && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Edit
+                </button>
+              )}
             </div>
+            {isEditing ? (
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={editedData}
+                  onChange={(e) => setEditedData(e.target.value)}
+                  className="w-full p-2 border-2 border-yellow-400 rounded text-sm focus:outline-none focus:border-yellow-500"
+                  autoFocus
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleSave}
+                    className="flex-1 px-3 py-1 bg-yellow-500 text-white text-xs font-semibold rounded hover:bg-yellow-600"
+                  >
+                    Tamper Block
+                  </button>
+                  <button
+                    onClick={handleCancel}
+                    className="flex-1 px-3 py-1 bg-gray-400 text-white text-xs font-semibold rounded hover:bg-gray-500"
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <p className="text-xs text-yellow-700 bg-yellow-50 p-2 rounded">
+                  ⚠️ Changing data without re-mining will break the chain!
+                </p>
+              </div>
+            ) : (
+              <div className="mt-1 p-2 bg-gray-50 rounded text-sm text-gray-800 break-words">
+                {block.data || '(empty)'}
+              </div>
+            )}
           </div>
 
           {/* Previous Hash */}

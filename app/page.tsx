@@ -17,7 +17,8 @@ export default function Home() {
     isMining,
     lastMiningResult,
     addBlock,
-    setDifficulty
+    setDifficulty,
+    editBlock
   } = useBlockchain(2); // Start with difficulty 2
 
   useEffect(() => {
@@ -70,10 +71,33 @@ export default function Home() {
           </div>
 
           {/* Phase 2 & 3: Display the Blockchain */}
-          <BlockChainView chain={chain} validationStatus={validationStatus} />
+          <BlockChainView 
+            chain={chain} 
+            validationStatus={validationStatus}
+            onEditBlock={editBlock}
+          />
+
+          {/* Educational Info Box */}
+          <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-yellow-900 mb-2 flex items-center gap-2">
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              Try Tampering with the Blockchain!
+            </h3>
+            <p className="text-sm text-yellow-800 mb-3">
+              Click the <strong>"Edit"</strong> button on any block (except Genesis) to change its data. 
+              This simulates a malicious actor trying to alter transaction history.
+            </p>
+            <ul className="text-sm text-yellow-800 space-y-1 list-disc list-inside">
+              <li>The block's hash won't be recalculated (tampered data)</li>
+              <li>The validation indicator will turn red</li>
+              <li>The tampered block and all subsequent blocks will show as invalid</li>
+              <li>This demonstrates why blockchain is secure and tamper-evident!</li>
+            </ul>
+          </div>
 
           {/* TODO: Add in future phases:
-              - Block editing for tampering demo (Phase 5)
               - TransactionLedger view (Phase 6 - bonus)
           */}
         </main>

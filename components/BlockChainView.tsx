@@ -4,6 +4,7 @@ import BlockCard from './BlockCard';
 interface BlockChainViewProps {
   chain: IBlock[];
   validationStatus: BlockValidation[];
+  onEditBlock?: (index: number, newData: string) => void;
 }
 
 /**
@@ -12,8 +13,10 @@ interface BlockChainViewProps {
  * Container that displays the entire blockchain with visual linking
  * between blocks. Shows how each block's previousHash connects to
  * the previous block's hash.
+ * 
+ * Phase 5: Added edit callback for tampering demonstration
  */
-export default function BlockChainView({ chain, validationStatus }: BlockChainViewProps) {
+export default function BlockChainView({ chain, validationStatus, onEditBlock }: BlockChainViewProps) {
   if (chain.length === 0) {
     return (
       <div className="text-center py-20">
@@ -65,6 +68,7 @@ export default function BlockChainView({ chain, validationStatus }: BlockChainVi
                   key={block.index}
                   block={block}
                   isValid={isValid}
+                  onEdit={onEditBlock}
                   isFirst={index === 0}
                   isLast={index === chain.length - 1}
                 />
