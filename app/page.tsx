@@ -6,6 +6,7 @@ import BlockChainView from '@/components/BlockChainView';
 import ValidationIndicator from '@/components/ValidationIndicator';
 import DifficultySelector from '@/components/DifficultySelector';
 import MiningForm from '@/components/MiningForm';
+import TransactionLedger from '@/components/TransactionLedger';
 
 export default function Home() {
   // Phase 3: Use custom blockchain state management hook
@@ -97,9 +98,8 @@ export default function Home() {
             </ul>
           </div>
 
-          {/* TODO: Add in future phases:
-              - TransactionLedger view (Phase 6 - bonus)
-          */}
+          {/* Phase 6: Transaction Ledger (Bonus Feature) */}
+          <TransactionLedger chain={chain} />
         </main>
 
         {/* Footer */}
