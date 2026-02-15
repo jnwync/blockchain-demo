@@ -3,6 +3,9 @@
 import { useEffect } from 'react';
 import { useBlockchain } from '@/hooks/useBlockchain';
 import BlockChainView from '@/components/BlockChainView';
+import ValidationIndicator from '@/components/ValidationIndicator';
+import DifficultySelector from '@/components/DifficultySelector';
+import MiningForm from '@/components/MiningForm';
 
 export default function Home() {
   // Phase 3: Use custom blockchain state management hook
@@ -12,7 +15,9 @@ export default function Home() {
     isValid, 
     difficulty,
     isMining,
-    addBlock 
+    lastMiningResult,
+    addBlock,
+    setDifficulty
   } = useBlockchain(2); // Start with difficulty 2
 
   useEffect(() => {
@@ -33,56 +38,53 @@ export default function Home() {
   }, []); // Empty dependency array - run once on mount
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Header */}
         <header className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Blockchain Visualizer
+          <h1 className="text-5xl font-bold text-gray-900 mb-2">
+            ⛓️ Blockchain Visualizer
           </h1>
-          <p className="text-gray-600">
-            Watch how blockchain works in real-time
+          <p className="text-lg text-gray-600">
+            Watch how blockchain works in real-time - mine blocks, see validation, and understand proof-of-work
           </p>
-          
-          {/* Chain Status Info */}
-          <div className="mt-4 flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-gray-600">Status:</span>
-              <span className={`font-semibold ${isValid ? 'text-green-600' : 'text-red-600'}`}>
-                {isValid ? '✓ Valid' : '✗ Invalid'}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-600">Difficulty:</span>
-              <span className="font-semibold text-blue-600">{difficulty}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-600">Blocks:</span>
-              <span className="font-semibold text-gray-900">{chain.length}</span>
-            </div>
-            {isMining && (
-              <div className="flex items-center gap-2 text-yellow-600">
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                <span className="font-semibold">Mining...</span>
-              </div>
-            )}
-          </div>
         </header>
 
-        <main>
-          {/* Phase 2 & 3: Display the Blockchain with live state */}
+        <main className="space-y-6">
+          {/* Phase 4: Validation Indicator */}
+          <ValidationIndicator isValid={isValid} blockCount={chain.length} />
+
+          {/* Phase 4: Interactive Controls */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <DifficultySelector
+              difficulty={difficulty}
+              onDifficultyChange={setDifficulty}
+              disabled={isMining}
+            />
+            <MiningForm
+              onMine={addBlock}
+              isMining={isMining}
+              lastMiningResult={lastMiningResult}
+              difficulty={difficulty}
+            />
+          </div>
+
+          {/* Phase 2 & 3: Display the Blockchain */}
           <BlockChainView chain={chain} validationStatus={validationStatus} />
 
-          {/* TODO: Add interactive components in future phases:
-              - ValidationIndicator (Phase 4)
-              - DifficultySelector (Phase 4)
-              - MiningForm (Phase 4)
-              - Block editing (Phase 5)
-              - TransactionLedger (Phase 6 - bonus)
+          {/* TODO: Add in future phases:
+              - Block editing for tampering demo (Phase 5)
+              - TransactionLedger view (Phase 6 - bonus)
           */}
         </main>
+
+        {/* Footer */}
+        <footer className="mt-12 text-center text-sm text-gray-500">
+          <p>
+            Built with Next.js, TypeScript, and Tailwind CSS • 
+            Educational blockchain visualization
+          </p>
+        </footer>
       </div>
     </div>
   );
