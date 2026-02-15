@@ -1,4 +1,29 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Blockchain } from '@/lib/blockchain';
+import { IBlock, BlockValidation } from '@/lib/blockchain/types';
+import BlockChainView from '@/components/BlockChainView';
+
 export default function Home() {
+  const [chain, setChain] = useState<IBlock[]>([]);
+  const [validationStatus, setValidationStatus] = useState<BlockValidation[]>([]);
+
+  useEffect(() => {
+    // Initialize blockchain with genesis block and a few pre-mined blocks
+    const blockchain = new Blockchain({ difficulty: 2 });
+    
+    // Mine a couple of blocks to demonstrate the chain
+    blockchain.addBlock('Alice pays Bob 10 coins');
+    blockchain.addBlock('Bob pays Charlie 5 coins');
+    
+    // Get validation status for all blocks
+    const validation = blockchain.getBlockValidationStatus();
+    
+    setChain(blockchain.chain);
+    setValidationStatus(validation);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
@@ -12,18 +37,16 @@ export default function Home() {
         </header>
 
         <main>
-          {/* TODO: Add components here as we build them:
-              - ValidationIndicator (Phase 6)
-              - DifficultySelector (Phase 6)
-              - MiningForm (Phase 6)
-              - BlockChainView (Phase 4)
-              - TransactionLedger (Phase 8 - bonus)
+          {/* Phase 2: Display the Blockchain */}
+          <BlockChainView chain={chain} validationStatus={validationStatus} />
+
+          {/* TODO: Add interactive components in future phases:
+              - ValidationIndicator (Phase 4)
+              - DifficultySelector (Phase 4)
+              - MiningForm (Phase 4)
+              - Block editing (Phase 5)
+              - TransactionLedger (Phase 6 - bonus)
           */}
-          <div className="text-center py-20">
-            <p className="text-gray-500 text-lg">
-              Blockchain components will be added in the next phases
-            </p>
-          </div>
         </main>
       </div>
     </div>
